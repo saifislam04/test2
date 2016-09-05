@@ -1,0 +1,687 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>dc.js - US Venture Capital Landscape 2011</title>
+
+    <meta charset="UTF-8">
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    
+    <!--<link rel="stylesheet" type="text/css" href="../css/dc.css"/>-->
+    <style type="text/css">
+        div.dc-chart {
+            float: left;
+        }
+        
+        .dc-chart rect.bar {
+            stroke: none;
+            cursor: pointer;
+        }
+        
+        .dc-chart rect.bar:hover {
+            fill-opacity: .5;
+        }
+        
+        .dc-chart rect.stack1 {
+            stroke: none;
+            fill: red;
+        }
+        
+        .dc-chart rect.stack2 {
+            stroke: none;
+            fill: green;
+        }
+        
+        .dc-chart rect.deselected {
+            stroke: none;
+            fill: #ccc;
+        }
+        
+        .dc-chart .empty-chart .pie-slice path {
+            fill: #FFEEEE;
+            cursor: default;
+        }
+        
+        .dc-chart .empty-chart .pie-slice {
+            cursor: default;
+        }
+        
+        .dc-chart .pie-slice {
+            fill: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .dc-chart .pie-slice.external{
+            fill: black;
+        }
+        
+        .dc-chart .pie-slice :hover {
+            fill-opacity: .8;
+        }
+        
+        .dc-chart .pie-slice.highlight {
+            fill-opacity: .8;
+        }
+        
+        .dc-chart .pie-path {
+          fill:none;
+          stroke-width: 2px;
+          stroke: black;
+          opacity: 0.4;
+        }
+        
+        .dc-chart .selected path {
+            stroke-width: 3;
+            stroke: #ccc;
+            fill-opacity: 1;
+        }
+        
+        .dc-chart .deselected path {
+            stroke: none;
+            fill-opacity: .5;
+            fill: #ccc;
+        }
+        
+        .dc-chart .axis path,
+        .dc-chart .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+        
+        .dc-chart .axis text {
+            font: 10px sans-serif;
+        }
+        
+        .dc-chart .grid-line,
+        .dc-chart .axis .grid-line {
+            fill: none;
+            stroke: #ccc;
+            opacity: .5;
+            shape-rendering: crispEdges;
+        }
+        
+        .dc-chart .grid-line line,
+        .dc-chart .axis .grid-line line {
+            fill: none;
+            stroke: #ccc;
+            opacity: .5;
+            shape-rendering: crispEdges;
+        }
+        
+        .dc-chart .brush rect.background {
+            z-index: -999;
+        }
+        
+        .dc-chart .brush rect.extent {
+            fill: steelblue;
+            fill-opacity: .125;
+        }
+        
+        .dc-chart .brush .resize path {
+            fill: #eee;
+            stroke: #666;
+        }
+        
+        .dc-chart path.line {
+            fill: none;
+            stroke-width: 1.5px;
+        }
+        
+        .dc-chart circle.dot {
+            stroke: none;
+        }
+        
+        .dc-chart g.dc-tooltip path {
+            fill: none;
+            stroke: grey;
+            stroke-opacity: .8;
+        }
+        
+        .dc-chart path.area {
+            fill-opacity: .3;
+            stroke: none;
+        }
+        
+        .dc-chart .node {
+            font-size: 0.7em;
+            cursor: pointer;
+        }
+        
+        .dc-chart .node :hover {
+            fill-opacity: .8;
+        }
+        
+        .dc-chart .selected circle {
+            stroke-width: 3;
+            stroke: #ccc;
+            fill-opacity: 1;
+        }
+        
+        .dc-chart .deselected circle {
+            stroke: none;
+            fill-opacity: .5;
+            fill: #ccc;
+        }
+        
+        .dc-chart .bubble {
+            stroke: none;
+            fill-opacity: 0.6;
+        }
+        
+        .dc-data-count {
+            float: right;
+            margin-top: 15px;
+            margin-right: 15px;
+        }
+        
+        .dc-data-count .filter-count {
+            color: #3182bd;
+            font-weight: bold;
+        }
+        
+        .dc-data-count .total-count {
+            color: #3182bd;
+            font-weight: bold;
+        }
+        
+        .dc-data-table {
+        }
+        
+        .dc-chart g.state {
+            cursor: pointer;
+        }
+        
+        .dc-chart g.state :hover {
+            fill-opacity: .8;
+        }
+        
+        .dc-chart g.state path {
+            stroke: white;
+        }
+        
+        .dc-chart g.selected path {
+        }
+        
+        .dc-chart g.deselected path {
+            fill: grey;
+        }
+        
+        .dc-chart g.selected text {
+        }
+        
+        .dc-chart g.deselected text {
+            display: none;
+        }
+        
+        .dc-chart g.county path {
+            stroke: white;
+            fill: none;
+        }
+        
+        .dc-chart g.debug rect {
+            fill: blue;
+            fill-opacity: .2;
+        }
+        
+        .dc-chart g.row rect {
+            fill-opacity: 0.8;
+            cursor: pointer;
+        }
+        
+        .dc-chart g.row rect:hover {
+            fill-opacity: 0.6;
+        }
+        
+        .dc-chart g.row text {
+            fill: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .dc-legend {
+            font-size: 11px;
+        }
+        
+        .dc-legend-item {
+            cursor: pointer;
+        }
+        
+        .dc-chart g.axis text {
+            /* Makes it so the user can't accidentally click and select text that is meant as a label only */
+            -webkit-user-select: none; /* Chrome/Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10 */
+            -o-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+        
+        .dc-chart path.highlight {
+            stroke-width: 3;
+            fill-opacity: 1;
+            stroke-opacity: 1;
+        }
+        
+        .dc-chart .highlight {
+            fill-opacity: 1;
+            stroke-opacity: 1;
+        }
+        
+        .dc-chart .fadeout {
+            fill-opacity: 0.2;
+            stroke-opacity: 0.2;
+        }
+        
+        .dc-chart path.dc-symbol,
+        g.dc-legend-item.fadeout {
+            fill-opacity: 0.5;
+            stroke-opacity: 0.5;
+        }
+        
+        .dc-hard .number-display {
+            float: none;
+        }
+        
+        .dc-chart .box text {
+            font: 10px sans-serif;
+            -webkit-user-select: none; /* Chrome/Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10 */
+            -o-user-select: none;
+            user-select: none;
+            pointer-events: none;
+        }
+        
+        .dc-chart .box line,
+        .dc-chart .box circle {
+            fill: #fff;
+            stroke: #000;
+            stroke-width: 1.5px;
+        }
+        
+        .dc-chart .box rect {
+            stroke: #000;
+            stroke-width: 1.5px;
+        }
+        
+        .dc-chart .box .center {
+            stroke-dasharray: 3,3;
+        }
+        
+        .dc-chart .box .outlier {
+            fill: none;
+            stroke: #ccc;
+        }
+        
+        .dc-chart .box.deselected .box {
+            fill: #ccc;
+        }
+        
+        .dc-chart .box.deselected {
+            opacity: .5;
+        }
+        
+        .dc-chart .symbol{
+            stroke: none;
+        }
+        
+        .dc-chart .heatmap .box-group.deselected rect {
+            stroke: none;
+            fill-opacity: .5;
+            fill: #ccc;
+        }
+        
+        .dc-chart .heatmap g.axis text {
+            pointer-events: all;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Demo dynamic US map + table</h2>
+
+    <p>
+        Example showing a dynamic choropleth map associated with a table. Clicking an a State will filter the table based on that state.
+        The table is also dynamic (supports dynamic filterting as you type, sorting, pagination, <it>etc</it>.
+    </p>
+
+    <p>
+        Public demo data source
+        <a href="http://buzzdata.com/azad2002/the-united-states-of-venture-capital-2011#!/data" target="_blank">BuzzData.com</a>.
+    </p>
+
+    <div id="us-chart">
+        <strong>VC Distribution by States (color: total amount raised)</strong>
+        <a class="reset" href="javascript:usChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+
+        <!--<div class="clearfix"></div>-->
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div id="industry-chart">
+        <strong>By Industries</strong> (y: number of deals, x: total amount raised in millions, radius: amount raised)
+        <a class="reset" href="javascript:industryChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <!--<div id="round-chart">
+        <strong>By Rounds</strong> (y: number of deals, x: total amount raised in millions, radius: amount raised)
+        <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+        <div class="clearfix"></div>
+    </div>-->
+
+    <!--<div class="clearfix"></div>-->
+    
+    <br><br>
+
+    <div id="">
+        <table id="dc-data-table"></table>
+        <!--<strong>By Rounds</strong> (y: number of deals, x: total amount raised in millions, radius: amount raised)-->
+        <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+        <!--<div class="clearfix"></div>-->
+    </div>
+
+    <!--<div class="clearfix"></div>-->
+
+    <div>
+        <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+    </div>
+
+</div>
+
+
+<!--https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js-->
+<!--<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>-->
+
+<script src="//code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.min.js"></script>
+<script type="text/javascript" src="dc.min.js"></script>
+<script type="text/javascript" src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+
+
+<script type="text/javascript">
+    var numberFormat = d3.format(".2f");
+
+// 	$('#dc-data-table').html(' <thead> <tr>  <th>Year</th> <th>Title</th> <th>Directors</th> <th>Rating Date</th> <th>Your Rating</th> <th>IMDb Rating</th> <th>Diff. Rating</th> <th>NumVotes</th> <th>Runtime (mins)</th> <th>Genres</th> <th>Type</th> </tr> </thead>');
+				
+				
+    var usChart = dc.geoChoroplethChart("#us-chart");
+    var industryChart = dc.bubbleChart("#industry-chart");
+    // var roundChart = dc.bubbleChart("#round-chart");
+    // var vcTable = dc.dataTable('#dc-data-table');
+
+    d3.csv("vc.csv", function (csv) {
+        var data = crossfilter(csv);
+
+        var states = data.dimension(function (d) {
+            return d["State"];
+        });
+        var stateRaisedSum = states.group().reduceSum(function (d) {
+            return d["Raised"];
+        });
+
+        var industries = data.dimension(function (d) {
+            return d["Industry Group"];
+        });
+        var statsByIndustries = industries.group().reduce(
+                function (p, v) {
+                    p.amountRaised += +v["Raised"];
+                    p.deals += +v["Deals"];
+                    return p;
+                },
+                function (p, v) {
+                    p.amountRaised -= +v["Raised"];
+                    if (p.amountRaised < 0.001) p.amountRaised = 0; // do some clean up
+                    p.deals -= +v["Deals"];
+                    return p;
+                },
+                function () {
+                    return {amountRaised: 0, deals: 0}
+                }
+        );
+
+        var rounds = data.dimension(function (d) {
+            return d["RoundClassDescr"];
+        });
+        var statsByRounds = rounds.group().reduce(
+                function (p, v) {
+                    p.amountRaised += +v["Raised"];
+                    p.deals += +v["Deals"];
+                    return p;
+                },
+                function (p, v) {
+                    p.amountRaised -= +v["Raised"];
+                    if (p.amountRaised < 0.001) p.amountRaised = 0; // do some clean up
+                    p.deals -= +v["Deals"];
+                    return p;
+                },
+                function () {
+                    return {amountRaised: 0, deals: 0}
+                }
+        );
+
+        d3.json("us-states.json", function (statesJson) {
+            usChart.width(990)
+                    .height(500)
+                    .dimension(states)
+                    .group(stateRaisedSum)
+                    .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
+                    .colorDomain([0, 200])
+                    .colorCalculator(function (d) { return d ? usChart.colors()(d) : '#ccc'; })
+                    .overlayGeoJson(statesJson.features, "state", function (d) {
+                        return d.properties.name;
+                    })
+                    .title(function (d) {
+                        return "State: " + d.key + "\nTotal Amount Raised: " + numberFormat(d.value ? d.value : 0) + "M";
+                    });
+                    
+                    
+            
+            // vcTable
+            //     .dimension(states)
+            //     .group(function (d) {
+            //         // var format = d3.format('02d');
+            //         // return d.dd.getFullYear() + '/' + format((d.dd.getMonth() + 1));
+            //         // return '1';
+            //         return d.City;
+            //     })
+            //     // .size(10)
+            //     .columns([
+            //         'City'
+            //         ,
+            //         'IndustryCode',
+            //         'PrimaryRegion',
+            //         'CloseDate'
+                    
+                    
+            //         // 'open',
+            //         // 'close',
+            //         // {
+            //         //     label: 'Change',
+            //         //     format: function (d) {
+            //         //         console.log('d=', d);
+            //         //         return 'numberFormat(d.close - d.open)';
+            //         //     }
+            //         // }
+            //         // ,
+            //         // 'volume'
+            //     ])
+            // //     // .sortBy(function (d) {
+            // //     //     return d.dd;
+            // //     // })
+            // //     // .order(d3.ascending)
+            // //     // .on('renderlet', function (table) {
+            // //     //     table.selectAll('.dc-table-group').classed('info', true);
+            // //     // })
+            //     ;
+            
+			$('#dc-data-table').html(' \
+			        <thead>\
+			            <tr>  \
+			                <th>City</th>\
+			                <th>CloseDate</th>\
+			                <th>Industry Group</th>\
+			                <th>Raised</th>\
+			            </tr>\
+			        </thead>');
+
+            var datatable = $('#dc-data-table').dataTable({
+					"lengthMenu": [ [10, 50, 200, -1], [10, 50, 200, "All"] ]
+					,"order": [[0, 'desc']]
+					// ,"dom": 'T<"clear-l"l><"clear-l"i><"clear-r"f><"clear-r"p>t'
+					,"bAutoWidth": false
+    				// ,destroy: true
+    				,"bDestroy" : true
+					// ,"sDom": 'rtlip'
+					,columnDefs: [
+						{
+							targets: 0,
+							data: function (d) {
+                                // console.log('d=', d);
+								return d.City ;
+							}
+						},
+						{
+							targets: 1,
+							data: function (d) {
+								return d.CloseDate ;
+							}
+						},
+						{
+							targets: 2,
+							data: function (d) {
+								return d['Industry Group'] ;
+							}
+						},
+						{
+							targets: 3,
+							data: function (d) {
+								return d['Raised'] ;
+							}
+						}
+					]
+				}) ;
+			datatable.fnDraw(false);
+			function RefreshTable() {
+			  dc.events.trigger(function () {
+			    datatable.api()
+			      .clear()
+			      .rows.add( states.top(Infinity) )
+			      .draw() ;
+			  });
+			}
+			for (var i = 0; i < dc.chartRegistry.list().length; i++) {
+			  var chartI = dc.chartRegistry.list()[i];
+			  chartI.on("filtered", RefreshTable);
+			}
+			RefreshTable() ;
+        
+                
+
+            industryChart.width(990)
+                    .height(200)
+                    .margins({top: 10, right: 50, bottom: 30, left: 60})
+                    .dimension(industries)
+                    .group(statsByIndustries)
+                    .colors(d3.scale.category10())
+                    .keyAccessor(function (p) {
+                        return p.value.amountRaised;
+                    })
+                    .valueAccessor(function (p) {
+                        return p.value.deals;
+                    })
+                    .radiusValueAccessor(function (p) {
+                        return p.value.amountRaised;
+                    })
+                    .x(d3.scale.linear().domain([0, 5000]))
+                    .r(d3.scale.linear().domain([0, 4000]))
+                    .minRadiusWithLabel(15)
+                    .elasticY(true)
+                    .yAxisPadding(100)
+                    .elasticX(true)
+                    .xAxisPadding(200)
+                    .maxBubbleRelativeSize(0.07)
+                    .renderHorizontalGridLines(true)
+                    .renderVerticalGridLines(true)
+                    .renderLabel(true)
+                    .renderTitle(true)
+                    .title(function (p) {
+                        return p.key
+                                + "\n"
+                                + "Amount Raised: " + numberFormat(p.value.amountRaised) + "M\n"
+                                + "Number of Deals: " + numberFormat(p.value.deals);
+                    });
+            industryChart.yAxis().tickFormat(function (s) {
+                return s + " deals";
+            });
+            industryChart.xAxis().tickFormat(function (s) {
+                return s + "M";
+            });
+
+            // roundChart.width(990)
+            //         .height(200)
+            //         .margins({top: 10, right: 50, bottom: 30, left: 60})
+            //         .dimension(rounds)
+            //         .group(statsByRounds)
+            //         .colors(d3.scale.category10())
+            //         .keyAccessor(function (p) {
+            //             return p.value.amountRaised;
+            //         })
+            //         .valueAccessor(function (p) {
+            //             return p.value.deals;
+            //         })
+            //         .radiusValueAccessor(function (p) {
+            //             return p.value.amountRaised;
+            //         })
+            //         .x(d3.scale.linear().domain([0, 5000]))
+            //         .r(d3.scale.linear().domain([0, 9000]))
+            //         .minRadiusWithLabel(15)
+            //         .elasticY(true)
+            //         .yAxisPadding(150)
+            //         .elasticX(true)
+            //         .xAxisPadding(300)
+            //         .maxBubbleRelativeSize(0.07)
+            //         .renderHorizontalGridLines(true)
+            //         .renderVerticalGridLines(true)
+            //         .renderLabel(true)
+            //         .renderTitle(true)
+            //         .title(function (p) {
+            //             return p.key
+            //                     + "\n"
+            //                     + "Amount Raised: " + numberFormat(p.value.amountRaised) + "M\n"
+            //                     + "Number of Deals: " + numberFormat(p.value.deals);
+            //         });
+            // roundChart.yAxis().tickFormat(function (s) {
+            //     return s + " deals";
+            // });
+            // roundChart.xAxis().tickFormat(function (s) {
+            //     return s + "M";
+            // });
+
+            dc.renderAll();
+        });
+    });
+</script>
+
+
+
+</body>
+</html>
