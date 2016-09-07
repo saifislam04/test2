@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Analytic Expert- DEMO</title>
+    <title>dc.js - US Venture Capital Landscape 2011</title>
 
     <meta charset="UTF-8">
 
@@ -345,7 +345,7 @@
 
 <div class="container">
 
-    <h2>Analytic Expert DEMO</h2>
+    <h2>Demo dynamic US map + table</h2>
 
     <p>
         Example showing a dynamic choropleth map associated with a table. Clicking an a State will filter the table based on that state.
@@ -353,55 +353,64 @@
     </p>
 
     <p>
-       <!-- Public demo data source-->
-       <!--<a href="http://buzzdata.com/azad2002/the-united-states-of-venture-capital-2011#!/data" target="_blank">BuzzData.com</a>.-->
+        Public demo data source
+        <a href="http://buzzdata.com/azad2002/the-united-states-of-venture-capital-2011#!/data" target="_blank">BuzzData.com</a>.
     </p>
 
-    <div id="us-chart">
-        <strong>VC Distribution by States (color: total amount raised)</strong>
-        <a class="reset" href="javascript:usChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-        <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
 
-        <!--<div class="clearfix"></div>-->
-    </div>
+    <div class="row">
+        
 
-    <div class="clearfix"></div>
 
-    <div id="industry-chart">
-        <strong>By Industries</strong> (y: number of deals, x: total amount raised in millions, radius: amount raised)
-        <a class="reset" href="javascript:industryChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+        <div  class="col-md-6">  id="us-chart">
+            <strong>VC Distribution by States (color: total amount raised)</strong>
+            <a class="reset" href="javascript:usChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+
+            <!--<div class="clearfix"></div>-->
+        </div>
+
+        <!--div class="clearfix"></div-->
+
+        <div class="col-md-6" id="industry-chart">
+            <strong>By Industries</strong> (y: number of deals, x: total amount raised in millions, radius: amount raised)
+            <a class="reset" href="javascript:industryChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+            <div class="clearfix"></div>
+        </div>
 
         <div class="clearfix"></div>
-    </div>
 
-    <div class="clearfix"></div>
+        <!--<div id="round-chart">
+            <strong>By Rounds</strong> (y: number of deals, x: total amount raised in millions, radius: amount raised)
+            <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
-    <!--<div id="round-chart">
-        <strong>By Rounds</strong> (y: number of deals, x: total amount raised in millions, radius: amount raised)
-        <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-
-        <div class="clearfix"></div>
-    </div>-->
-
-    <!--<div class="clearfix"></div>-->
-    
-    <br><br>
-
-    <div id="">
-        <table id="dc-data-table"></table>
-        <!--<strong>By Rounds</strong> (y: number of deals, x: total amount raised in millions, radius: amount raised)-->
-        <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
+        </div>-->
 
         <!--<div class="clearfix"></div>-->
-    </div>
+        
+        <br><br>
 
-    <!--<div class="clearfix"></div>-->
+        <div class="col-md-12" id="">
+            <table id="dc-data-table"></table>
+            <!--<strong>By Rounds</strong> (y: number of deals, x: total amount raised in millions, radius: amount raised)-->
+            <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
-    <div>
-        <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
-    </div>
+            <!--<div class="clearfix"></div>-->
+        </div>
 
-</div>
+        <!--<div class="clearfix"></div>-->
+
+        <div>
+            <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+        </div>
+
+   
+    </div><!--Row End-->
+
+</div><!-- Container End-->
 
 
 <!--https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js-->
