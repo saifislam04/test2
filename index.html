@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>dc.js - US Venture Capital Landscape 2011</title>
+    <title>Saif's Dynamic Display</title>
 
     <meta charset="UTF-8">
 
@@ -352,10 +352,7 @@
         The table is also dynamic (supports dynamic filterting as you type, sorting, pagination, <it>etc</it>.
     </p>
 
-    <p>
-        Public demo data source
-        <a href="http://buzzdata.com/azad2002/the-united-states-of-venture-capital-2011#!/data" target="_blank">BuzzData.com</a>.
-    </p>
+   
 
 
     <div class="row">
@@ -487,7 +484,7 @@
         );
 
         d3.json("us-states.json", function (statesJson) {
-            usChart.width(990)
+            usChart.width(800)
                     .height(500)
                     .dimension(states)
                     .group(stateRaisedSum)
