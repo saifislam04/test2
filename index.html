@@ -484,8 +484,8 @@
         );
 
         d3.json("us-states.json", function (statesJson) {
-            usChart.width(800)
-                    .height(600)
+            usChart.width(600)
+                    .height(400)
                     .dimension(states)
                     .group(stateRaisedSum)
                     .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
